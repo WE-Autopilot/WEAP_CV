@@ -1,0 +1,30 @@
+# Ignore the virtual environment
+venv/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore logs and results
+logs/
+results/
+
+# Ignore datasets (you may want to keep them separate)
+datasets/coco/
+datasets/kitti/
+
+# Ignore model checkpoints and trained models
+*.ckpt
+*.pth
+*.pt
+*.onnx
+models/*.pth
+
+# Ignore system files
+.DS_Store
+Thumbs.db
