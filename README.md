@@ -46,7 +46,7 @@ pip freeze > requirements.txt
 ---
 
 ### **3️⃣ Check Kaggle Setup**
-You have a **datasets/** folder, but it looks empty. If using Kaggle to download datasets, ensure:
+You have a **datasets/** folder, but it looks empty. Using Kaggle download the datasets:
 1. **Install Kaggle API**:
    ```bash
    pip install kaggle
@@ -99,7 +99,7 @@ python inference.py --model lane_detection --input road_image.jpg
 ---
 
 ### **5️⃣ Run Jupyter Notebooks**
-Since you have `.ipynb` files, install Jupyter if not installed:
+Install Jupyter if not installed:
 ```bash
 pip install jupyter notebook
 jupyter notebook
