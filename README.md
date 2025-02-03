@@ -1,112 +1,22 @@
-### **1️⃣ Ensure `.gitignore` is Correct**
-Since your **`venv/` folder** is inside the project, make sure it's ignored in `.gitignore`:
-```plaintext
-# Ignore virtual environment
-venv/
+# **Project README**  
 
-# Ignore dataset files (if downloading separately)
-datasets/
+## **Project Overview**  
+This project focuses on **object detection, tracking, and lane detection** using **YOLOv8**. It is designed to work with **COCO** and **KITTI** datasets, providing a structured pipeline for model training, inference, and evaluation.  
 
-# Ignore Jupyter Notebook checkpoints
-.ipynb_checkpoints/
+The goal is to create an efficient and scalable solution for **computer vision tasks**, enabling accurate object detection and real-time tracking.  
 
-# Ignore logs and results
-logs/
-results/
+## **Technologies Used**  
+- **YOLOv8** for object detection  
+- **DeepSORT** for object tracking  
+- **Lane detection models** for road segmentation  
+- **COCO & KITTI datasets** for training and evaluation  
 
-# Ignore compiled Python files
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
+## **Project Structure**  
+The project is structured into modules for **data processing, model training, inference, and testing**, ensuring a streamlined workflow for development and experimentation.  
 
-# Ignore model checkpoints and large files
-*.pt
-*.pth
-*.onnx
-models/*.pth
+## **Use Cases**  
+- Object detection for autonomous systems  
+- Real-time tracking for surveillance and monitoring  
+- Lane detection for self-driving applications  
 
-# Ignore system files
-.DS_Store
-Thumbs.db
-```
-
----
-
-### **2️⃣ Verify `requirements.txt` is Complete**
-Your dependencies should be installed with:
-```bash
-pip install -r requirements.txt
-```
-To **update** `requirements.txt` if you installed new packages:
-```bash
-pip freeze > requirements.txt
-```
-
----
-
-### **3️⃣ Check Kaggle Setup**
-You have a **datasets/** folder, but it looks empty. Using Kaggle download the datasets:
-1. **Install Kaggle API**:
-   ```bash
-   pip install kaggle
-   ```
-2. **Move your `kaggle.json` API key** to:
-   ```bash
-   mkdir -p ~/.kaggle
-   mv ~/Downloads/kaggle.json ~/.kaggle/
-   chmod 600 ~/.kaggle/kaggle.json
-   ```
-3. **Download datasets** (example for COCO & KITTI):
-   ```bash
-   kaggle datasets download -d microsoft/coco
-   unzip coco.zip -d datasets/coco/
-
-   kaggle datasets download -d kitti/kitti-object-detection
-   unzip kitti-object-detection.zip -d datasets/kitti/
-   ```
-4. **Verify dataset files exist**:
-   ```bash
-   ls datasets/coco/
-   ls datasets/kitti/
-   ```
-
----
-
-### **4️⃣ Test Training & Inference Scripts**
-Run **quick tests** to make sure everything works properly.
-
-#### ✅ **Check if PyTorch is installed correctly**:
-```bash
-python -c "import torch; print(torch.__version__)"
-```
-
-#### ✅ **Test YOLOv8 Training**
-```bash
-python train.py --model yolov8 --dataset coco
-```
-
-#### ✅ **Test DeepSORT Tracking**
-```bash
-python inference.py --model deepsort --input sample_video.mp4
-```
-
-#### ✅ **Test Lane Detection**
-```bash
-python inference.py --model lane_detection --input road_image.jpg
-```
-
----
-
-### **5️⃣ Run Jupyter Notebooks**
-Install Jupyter if not installed:
-```bash
-pip install jupyter notebook
-jupyter notebook
-```
-Then open and verify:
-- `notebooks/deepsort_tracking.ipynb`
-- `notebooks/lane_detection.ipynb`
-- `notebooks/yolov8_training.ipynb`
-
----
+This project serves as a foundation for building advanced **computer vision applications**, providing tools for training custom models and performing real-time inference.
