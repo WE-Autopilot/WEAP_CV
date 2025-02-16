@@ -16,9 +16,10 @@ while (cap.isOpened()):
     frame = cv2.resize(frame, (540, 380), fx = 0, fy = 0,
                        interpolation=cv2.INTER_CUBIC)
 
-    # Display the resulting frame
-    cv2.imshow('Frame', frame)
+    # Display the resulting frame, commenting out for performance purposes
+    # cv2.imshow('Frame', frame)
 
+    # Run the model on each frame
     results = model(frame)
 
      # Draw detections

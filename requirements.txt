@@ -7,7 +7,7 @@ filelock==3.13.1
 fonttools==4.55.3
 fsspec==2024.2.0
 idna==3.10
-Jinja2==3.1.3
+jinja2>=3.1.5
 joblib==1.4.2
 kaggle==1.6.17
 kiwisolver==1.4.7
@@ -19,7 +19,7 @@ numpy==1.24.4
 opencv-python==4.11.0.86
 packaging==24.2
 pandas==2.0.3
-pillow==10.2.0
+pillow>=10.3.0
 psutil==6.1.1
 py-cpuinfo==9.0.0
 pycocotools==2.0.7
@@ -29,14 +29,14 @@ python-slugify==8.0.4
 pytz==2024.2
 PyYAML==6.0.2
 requests==2.32.3
-scikit-learn==1.3.2
+scikit-learn>=1.5.0
 scipy==1.10.1
 seaborn==0.13.2
 six==1.17.0
 sympy==1.13.1
 text-unidecode==1.3
 threadpoolctl==3.5.0
-torch==2.0.1
+torch>=2.2.0
 torchaudio==2.0.2
 torchvision==0.15.2
 tqdm==4.67.1
@@ -44,5 +44,5 @@ typing_extensions==4.9.0
 tzdata==2024.2
 ultralytics==8.3.63
 ultralytics-thop==2.0.14
-urllib3==1.26.18
+urllib3>=1.26.19
 webencodings==0.5.1
