@@ -15,8 +15,8 @@ logs/
 results/
 
 # Ignore datasets (you may want to keep them separate)
-datasets/coco/
-datasets/kitti/
+coco/
+google-cloud-sdk/
 
 # Ignore model checkpoints and trained models
 *.ckpt
