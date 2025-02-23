@@ -28,6 +28,7 @@ def main():
         num_workers=2
     )
 
+    
     model = nn.Sequential(
         nn.Flatten(),         
         nn.Linear(3*224*224, 100), 
