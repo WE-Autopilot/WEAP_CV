@@ -13,8 +13,8 @@ __pycache__/
 # Ignore logs and results
 logs/
 results/
-
 # Ignore datasets (you may want to keep them separate)
+<<<<<<< HEAD
 datasets/coco/
 #personal change not to be added to prod, but kept in my dev branch
 datasets/kitti/kitti_step
@@ -25,6 +25,10 @@ datasets/kitti/raw_data
 # Ignore zipped datasets when aquired and clean data is added to repo (prevents redownloads)
 *.zip
 
+=======
+coco/
+google-cloud-sdk/
+>>>>>>> dev
 # Ignore model checkpoints and trained models
 *.ckpt
 *.pth
