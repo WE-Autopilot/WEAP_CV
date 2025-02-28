@@ -16,10 +16,8 @@ class SmallCNN(nn.Module):
             nn.functional.Conv2d(3, 32, 3, 3),
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.ReLU(),
-            nn.Linear(9216, 32)
+            nn.Linear(9216, 32),
             nn.Linear(32,2)
         )
-    
-    def forward():
 
 # detection_model = SmallCNN()
