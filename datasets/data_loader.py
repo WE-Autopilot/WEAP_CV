@@ -15,11 +15,9 @@ def apply_cv2_transforms(img):
     :param img: PIL Image (converted to OpenCV format)
     :return: Transformed PIL Image
     """
+    
     img = np.array(img)  # Convert PIL image to OpenCV format (NumPy array)
-
-    alpha = np.random.uniform(0.9, 1.2)  # Reduced contrast variation
-    beta = np.random.randint(-15, 15)    # Reduced brightness shift
-    img = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
+    img = cv2.convertScaleAbs(img, alpha=np.random.uniform(0.9, 1.2), beta=np.random.randint(-15, 15))  # Reduced contrast variation + Reduced brightness shift
 
     img_hsv = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
     img_hsv[..., 1] = img_hsv[..., 1] * np.random.uniform(0.85, 1.15)  
