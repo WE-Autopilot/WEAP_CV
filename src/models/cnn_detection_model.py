@@ -22,7 +22,7 @@ NUM_EPOCHS = 2
 #MODEL DEFINITION
 #=====================================
 
-# Optimized CNN Model for Real-Time Stop Sign Classification
+# Optimized CNN Model for Real-Time Stop Sign Detection
 
 # Model Architecture:
 # 1. Conv2D (3x3, 64 filters, stride=1, padding=1)  -> Output: 128x128x64
@@ -36,6 +36,7 @@ NUM_EPOCHS = 2
 #
 
 # Optimization Strategies:
+# - Test the model with different ordering of layers dropout and batch normalization.
 # - Used Global Average Pooling (GAP) instead of Flatten + Large FC layer.
 # - Reduced the number of parameters significantly.
 # - Maintains accuracy while reducing computational cost for real-time performance.
@@ -45,19 +46,34 @@ class CNN(nn.Module):
     def __init__(self) -> None:
         super().__init__()
         
-        self.model = nn.Sequential(
-            nn.Conv2d(kernel_size = 3, stride = 1, padding = "same", in_channels = 3, out_channels = 64),
+        self.feature_extraction = nn.Sequential(
+            #Block 1
+            nn.Conv2d(kernel_size = 3, stride = 1, padding = "same", in_channels = 3, out_channels = 32),
             nn.MaxPool2d(stride= 2, kernel_size= 2),
             nn.ReLU(),
-            nn.Conv2d(kernel_size = 3, stride = 1, padding = "same", in_channels = 64, out_channels = 32),
+            nn.BatchNorm2d(32),
+            nn.Dropout(0.25),
+
+            #Block 2
+            nn.Conv2d(kernel_size = 3, stride = 1, padding = "same", in_channels = 32, out_channels = 64),
             nn.MaxPool2d(stride= 2, kernel_size= 2),
             nn.ReLU(),
-            nn.AdaptiveAvgPool2d(1),
-            nn.Flatten(),
-            nn.Linear(32, 2)
-            #input sigmoid
+            nn.BatchNorm2d(64),
+            nn.Dropout(0.25),
         )
 
+        #The classifier block
+        self.classifier = nn.Sequential(
+            #Classification Block
+            nn.AdaptiveAvgPool2d(1),
+            nn.Flatten(),
+            nn.Linear(64, 2)
+            #into output sigmoid
+        )
+
+        self.regressor = nn.Sequential()
+        
+    #NEXT TASK UPDATE THE FORWARD FUNCTION
     def forward(self, x):
         return self.model(x)
     
