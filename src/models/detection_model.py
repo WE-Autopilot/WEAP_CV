@@ -101,7 +101,7 @@ def train_model(model, train_loader, val_loader, num_epochs = 25, ):
     epoch_loss = running_loss / len(train_loader.dataset)
     epoch_acc = running_corrects.double() / len(train_loader.dataset)
 
-    print(f'Train Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}')
+    print(f'Train Loss: {epoch_loss:.4f} Acc: {epoch_acc:.4f}') 
 
     # Validation phase
     model.eval()  # Set model to evaluate mode
