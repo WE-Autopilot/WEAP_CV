@@ -8,6 +8,51 @@ import torchvision.transforms as transforms
 from PIL import Image
 from torch.utils.data import DataLoader, random_split, Dataset
 
+import os
+import requests
+import zipfile
+from tqdm import tqdm # used for progress bars in downloading the dataset
+
+# this function will download the unaugmented train and val datasets from roboflow
+def download_roboflow_dataset(dataset_url, output_dir='stop_sign_dataset'):
+    """
+    Download and extract dataset from Roboflow
+    
+    Args:
+        dataset_url: URL to download the dataset from
+        output_dir: Directory where the dataset will be extracted
+    """
+    # Create full paths
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    output_path = os.path.join(base_dir, output_dir)
+    zip_path = os.path.join(output_path, "temp_dataset.zip")
+    
+    # Create directory if it doesn't exist
+    os.makedirs(output_path, exist_ok=True)
+    
+    # Console messages
+    print(f'Downloading dataset to {zip_path}...')
+    try: 
+        response = requests.get(dataset_url, stream=True)
+        response.raise_for_status() # raise status to check for bad response
+        
+        dataset_size = int(response.headers.get('content-length', 0))
+        
+        with open(zip_path, 'wb') as file:
+            for data in tqdm(response.iter_content(chunk_size=1024), total=dataset_size, unit='B', unit_scale=True):
+                file.write(data)
+    
+        print("\nDownload complete. Extracting files...")
+    
+        # extract zips
+        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+            zip_ref.extractall(output_path)
+    
+        # delete downloaded zip file
+        os.remove(zip_path)
+        print(f'Extraction complete. Files extracted to {output_path}')
+    except requests.exceptions.RequestException as e:
+        print(f"Error downloading the dataset: {e}")
 
 def apply_cv2_transforms(img):
     """
