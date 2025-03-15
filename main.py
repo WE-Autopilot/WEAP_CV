@@ -4,8 +4,10 @@ from datasets.coco import get_coco_dataset, check_dataset_integrity
 from datasets.data_loader import create_train_val_test_loaders
 from torchvision import transforms
 from train import train_model
+import datasets.data_loader as data_loader
 
 def main():
+    '''
     data_dir = "./coco"
 
     transform = transforms.Compose([
@@ -28,6 +30,7 @@ def main():
         num_workers=2
     )
 
+    
     model = nn.Sequential(
         nn.Flatten(),         
         nn.Linear(3*224*224, 100), 
@@ -44,6 +47,10 @@ def main():
         lr=1e-3, 
         device=device
     )
+    '''
+    
+    # testing the dataloader
+    data_loader.download_roboflow_dataset('https://app.roboflow.com/ds/LXl5gthuky?key=9cEzxHzAiX')
 
 if __name__ == '__main__':
     main()
