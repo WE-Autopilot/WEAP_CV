@@ -1,5 +1,6 @@
 
 # Ignore the virtual environment
+.venv/
 venv/
 WEAP_CV/
 # Ignore Python cache files
