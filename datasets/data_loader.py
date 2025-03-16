@@ -54,6 +54,7 @@ def download_roboflow_dataset(dataset_url, output_dir='stop_sign_dataset'):
     except requests.exceptions.RequestException as e:
         print(f"Error downloading the dataset: {e}")
 
+
 def apply_cv2_transforms(img):
     """
     Applies OpenCV-based augmentations dynamically when images are loaded.
@@ -169,3 +170,43 @@ def create_train_val_test_loaders(image_paths, labels, batch_size=8, train_ratio
     test_loader  = create_dataloader(test_dataset,  batch_size=batch_size, shuffle=False, num_workers=num_workers)
     val_loader   = create_dataloader(val_dataset,   batch_size=batch_size, shuffle=False, num_workers=num_workers)
     return train_loader, test_loader, val_loader
+
+
+class StopSignDataset(Dataset):
+    """
+    Custom dataset class for Stop Sign detection that applies transformations during training.
+    """
+    def __init__(self, img_dir, transform=None):
+        self.img_dir = img_dir
+        self.transform = transform
+        self.img_paths = [os.path.join(img_dir, f) for f in os.listdir(img_dir) if f.endswith(".jpg")]
+
+    def __len__(self):
+        return len(self.img_paths)
+
+    def __getitem__(self, idx):
+        img_path = self.img_paths[idx]
+        img = Image.open(img_path).convert("RGB")
+        if self.transform:
+            img = self.transform(img)
+        return img
+
+def connect_dataset_with_transforms(dataset_path):
+    """
+    Connects the downloaded dataset with transformations.
+    Ensures dataset is properly loaded with augmentations before training.
+    """
+    print("Applying transformations and preparing dataloaders...")
+    
+    transform_pipeline = get_stop_sign_transforms()
+    dataset = StopSignDataset(dataset_path, transform=transform_pipeline)
+    
+    train_size = int(0.8 * len(dataset))
+    val_size = len(dataset) - train_size
+    train_dataset, val_dataset = random_split(dataset, [train_size, val_size])
+    
+    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, num_workers=8, pin_memory=True, persistent_workers=True)
+    val_loader = DataLoader(val_dataset, batch_size=64, shuffle=False, num_workers=8, pin_memory=True, persistent_workers=True)
+    
+    print("Transformations applied successfully! Training and validation dataloaders ready.")
+    return train_loader, val_loader
