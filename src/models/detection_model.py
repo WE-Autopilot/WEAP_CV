@@ -46,10 +46,41 @@ class SmallCNN(nn.Module):
             nn.Linear(128, num_classes)
         )
 
+        self.stop_sign_regressor = nn.Sequential(
+            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=0),
+            nn.Conv2d(64, 12, kernel_size=3, stride=1, padding=0) 
+            # 12 outputs for 3 anchors and 4 coordinates
+        )
+
         def forward(self, x):
             x = self.stop_sign_cnn(x)
-            x = self.stop_sign_classifier(x)
-            return x
+            x_reg = self.stop_sign_regressor(x)
+            x_cls = self.stop_sign_classifier(x)
+            return x_cls, x_reg
+        
+def generate_anchors(base_size=16, scales=[2**0, 2**(1/3), 2**(2/3)]):
+    """
+    Generate anchor boxes for the model.
+    Args:
+        base_size: int, the size of the base anchor box
+        ratios: ONLY 1:1, the aspect ratios of the anchor boxes, because we are detecting stop signs
+        scales: list of floats, the scales of the anchor boxes"
+        """
+    
+    anchors = []
+    for scale in scales:
+        anchor = torch.tensor([0, 0, base_size*scale, base_size*scale]) # x1, y1, x2, y2 format
+        anchors.append(anchor)
+    return anchors
+
+def decode_bbox(anchors, raw_offsets):
+    """
+    Decode the bounding box from the anchor box.
+    Args:
+        anchors: tensor, the anchor boxes
+        raw_offsets: tensor, the raw offsets from the model"
+        """
+    
 
 # Create the model
 detection_model = SmallCNN()
@@ -59,7 +90,8 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 detection_model.to(device)
 
 # define a loss function and optimizer
-loss_fcn = nn.CrossEntropyLoss()
+loss_fcn_cls = nn.CrossEntropyLoss()
+loss_fcn_reg = nn.SmoothL1Loss()
 optimizer = optim.Adam(detection_model.parameters(), lr=0.001, betas=(0.5, 0.999), weight_decay=1e-4) # weigh decay for regularization
 
 # learning rate scheduler
@@ -82,13 +114,17 @@ def train_model(model, train_loader, val_loader, num_epochs = 25, ):
             inputs = inputs.to(device)
             labels = labels.to(device)
 
+            cls_labels = labels[:, 1] # get the class labels, assuming they are in the second column
+            bbox_labels = labels[:, 2:] # get the bounding box labels, assuming they are in the third column
+
             # zero the parameter gradients
             optimizer.zero_grad()
 
             # forward pass
-            outputs = model(inputs)
-            _, preds = torch.max(outputs, 1) # outputs is a tensor of shape [batch_size,2] and torch.max igores the first value
-            loss = loss_fcn(outputs, labels)
+            pred_cls, pred_rgs = model(inputs) # get the class and bounding box predictions
+            cls_loss = loss_fcn_cls(pred_cls, cls_labels.float())
+            rgs_loss = loss_fcn_reg(pred_rgs, bbox_labels.float())
+            loss = cls_loss + rgs_loss
 
             # backward pass and optimize
             loss.backward()
@@ -96,7 +132,7 @@ def train_model(model, train_loader, val_loader, num_epochs = 25, ):
 
             # loss and corrects
             running_loss += loss.item() * inputs.size(0)
-            running_corrects += torch.sum(preds == labels.data)
+            running_corrects += torch.sum(preds == labels.data) 
         
     epoch_loss = running_loss / len(train_loader.dataset)
     epoch_acc = running_corrects.double() / len(train_loader.dataset)
@@ -115,9 +151,10 @@ def train_model(model, train_loader, val_loader, num_epochs = 25, ):
             labels = labels.to(device)
                 
             # Forward pass
-            outputs = model(inputs)
-            _, preds = torch.max(outputs, 1)
-            loss = loss_fcn(outputs, labels)
+            pred_cls, pred_rgs = model(inputs) # get the class and bounding box predictions
+            cls_loss = loss_fcn_cls(pred_cls, cls_labels.float())
+            rgs_loss = loss_fcn_reg(pred_rgs, bbox_labels.float())
+            loss = cls_loss + rgs_loss
                 
             # Statistics
             val_loss += loss.item() * inputs.size(0)
