@@ -8,7 +8,9 @@ cycler==0.12.1
 filelock==3.13.1
 fonttools==4.55.3
 fsspec==2024.2.0
+future==1.0.0
 idna==3.10
+iso8601==2.1.0
 Jinja2==3.1.6
 joblib==1.4.2
 kaggle==1.6.17
@@ -38,6 +40,7 @@ psutil==6.1.1
 py-cpuinfo==9.0.0
 pycocotools==2.0.7
 pyparsing==3.1.4
+pyserial==3.5
 python-dateutil==2.9.0.post0
 python-slugify==8.0.4
 pytz==2024.2

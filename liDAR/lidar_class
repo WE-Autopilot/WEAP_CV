@@ -1,0 +1,87 @@
+import serial
+import numpy as np
+import time
+import json 
+import asyncio
+from scipy.interpolate import interp1d
+import driver, driver2
+
+# Serial port settings, change depending on ur configuration (I think based on operating system)
+PORT = "/dev/ttyUSB0"
+BAUD = 230400
+ser = serial.Serial(PORT, baudrate=BAUD, bytesize=8,
+                    stopbits=serial.STOPBITS_ONE, parity=serial.PARITY_NONE,
+                    timeout=0.01)
+
+"""
+ The lidar outputs 5000 rays per 360 degree rotation. This class normalizes
+ the 5000 rays to 360 to provide environment information in a dense format. 
+
+ This lidar class does the following:
+    1) Write to json files to store past runs. 
+       Size determined by duration of run.
+
+    2) Normalize lidar data for use by auto team. 
+
+    3) Work with a listen function so that detections are updated
+       at a known rate.
+"""
+
+class lidar_runs:
+    def __init__(self, num_points = 360):
+        self.num_points = 360
+    
+    # update every second after being called, and returns the normalized array
+    async def listen(self, timeout = 1):
+        end_time = time.monotonic() + timeout
+        
+        while time.monotonic() < end_time:
+            points = driver2.process_serial_data(ser)
+
+        return await self.normalize_lidar(points)
+         
+    async def normalize_lidar(self, data):
+        """
+        Normalize the LiDAR data by resampling the distance measurements to
+        ensure evenly spaced, same-length arrays.
+        
+        data: List or array of raw lidar data with 5000 points.
+        Returns a normalized array of size self.num_points.
+        """
+
+        # Create an interpolator that maps original points to the target size
+        x_original = np.linspace(0, len(data)-1, len(data))  # Original indices
+        x_normalized = np.linspace(0, len(data)-1, self.num_points)  # Target indices
+
+        # Interpolate to get evenly spaced values
+        interpolator = interp1d(x_original, data, kind='linear', fill_value='extrapolate')
+        lidar_normalized = interpolator(x_normalized)
+
+        # write the points to a json file
+        await self.write_to_json(lidar_normalized)
+
+        return lidar_normalized
+
+    # write the 360 element array of normalized points to a json file every 1 second
+    async def write_to_json(normalized_points):
+        with open("lidar_runs") as json_folder:
+            json.dump(json_folder, normalized_points)
+
+    # writing to disk
+    def _write_json_file(self, normalized_points):
+        """Actual blocking function to write JSON to disk."""
+        with open("lidar_runs.json", "w") as json_file:
+            json.dump(normalized_points.tolist(), json_file)
+
+async def main():
+    lidar = lidar_runs()
+
+    # Listen to LiDAR data and normalize it every second
+    while True:
+        normalized_points = await lidar.listen(timeout=1)
+        print("Normalized LiDAR points:", normalized_points)
+        await asyncio.sleep(1)  # Sleep to prevent constant polling without any pause
+
+if __name__ == "__main__":
+    asyncio.run(main())
+    

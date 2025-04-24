@@ -5,7 +5,7 @@ from queue import Queue
 from threading import Thread
 
 # change based off how it's done in linux 
-PORT      = "COM6"
+PORT      = "USB0"
 BAUD      = 230400
 PACKET_SZ = 48
 
