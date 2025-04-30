@@ -39,9 +39,9 @@ while (cap.isOpened()):
     # Canny edge detection, black and white representation of edges in a frame
     canny = cv2.Canny(grayFrame, 100, 200)
     cv2.imshow("Canny edge detection", canny)
-
+    
     # Display the resulting frame
-    #cv2.imshow('F1tenth Onboard Video', frame)
+    # cv2.imshow('F1tenth Onboard Video', frame)
 
      # define q as the exit button
     if cv2.waitKey(25) & 0xFF == ord('q'):
