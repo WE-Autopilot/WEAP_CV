@@ -4,8 +4,8 @@ import struct
 from queue import Queue
 from threading import Thread
 
-# change based off how it's done in linux 
-PORT      = "USB0"
+# change based off how it's done in other OSs
+PORT      = "/dev/ttyUSB0"
 BAUD      = 230400
 PACKET_SZ = 48
 
